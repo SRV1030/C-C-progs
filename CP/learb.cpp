@@ -1,35 +1,41 @@
-#include <bits/stdc++.h>
-#define li long long int
-#define lp(i,a,b) for(li i=a;i<b;i++)
-using namespace std;
-const li inf = 1e18+7;
-void solve(){
-    li n,m,mn=inf;
-    cin>>n>>m;
-    vector<li> a(n);
-    vector<li> v(n+1,1);
-    for(auto &it:a) cin>>it;
-    n=unique(a.begin(),a.end())-a.begin();
-    a.resize(n);
-    for(int i=0;i<n;i++){
-        v[a[i]]+=1;
+class Solution {
+public:
+    vector<int>bitset(int n){
+        vector<int>freq(50);
+        for(int i=0;i<32&&n;i++){
+            freq[i]=n%2;
+            n=n/2;
+        }
+        return freq;
     }
-    v[a[0]]-=1;
-    v[a[n-1]]-=1;
-     lp(i,0,n){
-        mn=min(mn,v[a[i]]);
+    int longestNiceSubarray(vector<int>& nums) {
+        int i=0,j=0,ans=1;
+        vector<int>freq(50);
+        while(j<nums.size()){
+            vector<int>cur=bitset(nums[j]);
+            while(true){
+                int flag=0;
+                for(int k=0;k<32;k++){
+                    if(cur[k]&&freq[k]){
+                        flag=1;
+                        break;
+                    }
+                }
+                if(flag==1){                    
+                    vector<int>curr=bitset(nums[i++]);
+                    for(int k=0;k<32;k++){
+                        freq[k]-=curr[k];
+                    }
+                }else{
+                    break;
+                }
+            }
+            for(int i=0;i<32;i++){
+                freq[i]+=cur[i];
+            }
+            ans=max(ans,j-i+1);
+            j++;
+        }
+        return ans;
     }
-    cout<<mn<<"\n";
-}
-int main()
-{   ios_base::sync_with_stdio(0); 
-    cin.tie(0); 
-    cout.tie(0);
-    li t=1;
-    cin>>t;
-    while(t--){
-        solve();
-    }
-
-    return 0;
-}
+};
